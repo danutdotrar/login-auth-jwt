@@ -22,6 +22,20 @@ const Login = () => {
         userRef.current.focus();
     }, []);
 
+    useEffect(() => {
+        setErrMsg("");
+    }, [user, pwd]);
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+
+        try {
+            const userData = await login({ user, pwd }).unwrap();
+        } catch (error) {
+            return error;
+        }
+    };
+
     return <div>Login</div>;
 };
 
