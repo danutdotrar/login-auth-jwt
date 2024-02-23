@@ -22,12 +22,17 @@ export const authSlice = createSlice({
             state.token = accessToken;
         },
         logOut: (state, action) => {
-            (state.user = null), (state.token = null);
+            state.user = null;
+            state.token = null;
         },
     },
     extraReducers: (builder) => {},
 });
 
-// export actions and slice
-export const {} = authSlice.actions;
+// export actions and authSlice.reducer
+export const { setCredentials, logOut } = authSlice.actions;
 export default authSlice.reducer;
+
+// export state selectors
+export const selectCurrentUser = (state) => state.auth.user;
+export const selectCurrentToken = (state) => state.auth.token;
