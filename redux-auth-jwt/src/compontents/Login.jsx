@@ -11,13 +11,13 @@ const Login = () => {
     const errRef = useRef();
 
     const [user, setUser] = useState("");
-    const [pwr, setPwd] = useState("");
+    const [pwd, setPwd] = useState("");
     const [errMsg, setErrMsg] = useState("");
 
     const navigate = useNavigate();
 
-    const [login, { isLoading }] = useState("");
-    const dipsatch = useDispatch();
+    const [login, { isLoading }] = useLoginMutation();
+    const dispatch = useDispatch();
 
     useEffect(() => {
         // set the focus on userRef when the component loads
@@ -33,10 +33,62 @@ const Login = () => {
 
         try {
             const userData = await login({ user, pwd }).unwrap();
+            console.log("userData ,", userData);
+
+            dispatch(setCredentials({ ...userData, user }));
+            setUser("");
+            setPwd("");
+
+            navigate("/welcome");
         } catch (error) {
-            return error;
+            if (!err?.originalStatus) {
+                setErrMsg("No Server response");
+            } else if (err.originalStatus?.status === 400) {
+                setErrMsg("Missing Username or Password");
+            } else if (err.originalStatus?.status === 401) {
+                setErrMsg("Unauthorized");
+            } else {
+                setErrMsg("Login failed");
+            }
+
+            errRef.current.focus();
         }
     };
+
+    const handleUserInput = (e) => setUser(e.target.value);
+    const handlePwdInput = (e) => setPwd(e.target.value);
+
+    const content = isLoading ? (
+        <h1>Loading...</h1>
+    ) : (
+        <section className="login">
+            <h1>Employee Login</h1>
+
+            <form onSubmit={handleSubmit}>
+                <label htmlFor="username">Username:</label>
+                <input
+                    type="text"
+                    id="username"
+                    ref={userRef}
+                    value={user}
+                    name="username"
+                    onChange={handleUserInput}
+                    required
+                />
+
+                <label htmlFor="password">Password:</label>
+                <input
+                    type="text"
+                    id="password"
+                    ref={pwdRef}
+                    value={pwd}
+                    name="password"
+                    onChange={handlePwdInput}
+                    required
+                />
+            </form>
+        </section>
+    );
 
     return <div>Login</div>;
 };
