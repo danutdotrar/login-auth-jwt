@@ -8,6 +8,7 @@ import { useLoginMutation } from "./authApiSlice";
 
 const Login = () => {
     const userRef = useRef();
+    const pwdRef = useRef();
     const errRef = useRef();
 
     const [user, setUser] = useState("");
@@ -40,7 +41,7 @@ const Login = () => {
             setPwd("");
 
             navigate("/welcome");
-        } catch (error) {
+        } catch (err) {
             if (!err?.originalStatus) {
                 setErrMsg("No Server response");
             } else if (err.originalStatus?.status === 400) {
@@ -86,6 +87,7 @@ const Login = () => {
                     onChange={handlePwdInput}
                     required
                 />
+                <button>Submit</button>
             </form>
         </section>
     );
