@@ -4,7 +4,9 @@ import { Link } from "react-router-dom";
 const Public = () => {
     return (
         <>
-            <h2>Employee Login</h2>;<Link to="/login">Login</Link>
+            <h1>Public.js</h1>
+            <h2>Employee Login</h2>
+            <Link to="/login">Login</Link>
         </>
     );
 };

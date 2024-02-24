@@ -9,9 +9,11 @@ import { useLoginMutation } from "../features/auth/authApiSlice";
 const Login = () => {
     const userRef = useRef();
     const errRef = useRef();
+
     const [user, setUser] = useState("");
     const [pwr, setPwd] = useState("");
     const [errMsg, setErrMsg] = useState("");
+
     const navigate = useNavigate();
 
     const [login, { isLoading }] = useState("");

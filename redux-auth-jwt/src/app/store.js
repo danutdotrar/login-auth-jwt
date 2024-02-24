@@ -8,7 +8,9 @@ export const store = configureStore({
         [apiSlice.reducerPath]: apiSlice.reducer,
         auth: authReducer,
     },
+    // needed for RTK Query to Cache results
     middleware: (getDefaultMiddleware) =>
         getDefaultMiddleware().concat(apiSlice.middleware),
+    // true if dev mode
     devTools: true,
 });
