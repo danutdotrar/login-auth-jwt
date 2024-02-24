@@ -1,13 +1,14 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import { setCredentials, logOut } from "../../features/auth/authSlice";
 
-// fetch the url and set headers token
+// fetch the url and set headers with Bearer token
 const baseQuery = fetchBaseQuery({
     baseUrl: "http://localhost:3500",
     // send back our http only secure cookie
     // the cookie is send with every query
     // attach credentials in cookie every time
     credentials: "include",
+    // prepare the header with Bearer token
     prepareHeaders: (headers, { getState }) => {
         // define token
         const token = getState().auth.token;
@@ -25,7 +26,7 @@ const baseQuery = fetchBaseQuery({
 // this will get us a new access token
 // create baseQuery with Re-auth
 const baseQueryWithReauth = async (args, api, extraOptions) => {
-    // define result
+    // wrap around the baseQuery
     let result = await baseQuery(args, api, extraOptions);
 
     // 403 forbidden - if we send an access token that would have been valid but expired
@@ -39,10 +40,21 @@ const baseQueryWithReauth = async (args, api, extraOptions) => {
         if (refreshResult?.data) {
             // get user
             const user = api.getState().auth.state;
+            // store the new token
+            api.dispatch(setCredentials({ ...refreshResult.data, user }));
+
+            // retry the orignial query with new access token
+            result = await baseQuery(args, api, extraOptions);
         }
+    } else {
+        api.dispatch(logOut());
     }
 
-    // 401 unauthorized
+    return result;
 };
 
-export const apiSlice = {};
+// create API
+export const apiSlice = createApi({
+    baseQuery: baseQueryWithReauth,
+    endpoints: (builder) => ({}),
+});
